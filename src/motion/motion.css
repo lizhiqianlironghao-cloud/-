@@ -1,0 +1,80 @@
+.portfolio-app{overflow-x:clip}
+.reading-progress{transform:scaleX(0)}
+.skip-link{z-index:200}
+
+.opening-overlay{position:fixed;inset:0;z-index:140;overflow:hidden;pointer-events:none;opacity:0;visibility:hidden;color:var(--text)}
+.opening-panel{position:absolute;top:0;bottom:0;width:50.1%;background:#101711}
+.opening-panel-left{left:0}
+.opening-panel-right{right:0}
+.opening-identity{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:19px}
+.opening-text-mask{display:block;overflow:hidden;padding:4px 12px 12px}
+.opening-name{display:block;font-size:clamp(64px,8vw,140px);font-weight:500;line-height:1.05;letter-spacing:-.06em;transform-origin:center bottom}
+.opening-mark{color:var(--accent);padding-left:8px}
+.opening-caption{display:block;font-size:11px;letter-spacing:.18em;color:#aab8a3}
+.opening-rule{display:block;width:min(340px,55vw);height:1px;background:#728368;transform-origin:center}
+.opening-edition{position:absolute;left:50%;bottom:42px;transform:translateX(-50%);font-size:9px;color:#83927a}
+.opening-skip{position:fixed;right:40px;top:33px;z-index:150;display:flex;align-items:center;gap:15px;padding:10px 16px;border:1px solid rgba(234,242,230,.25);border-radius:99px;background:transparent;font-size:11px;color:#bccbb3;opacity:0;visibility:hidden;transition:background-color .25s,color .25s}
+.opening-skip:is(:hover,:focus-visible){background:var(--accent);color:var(--bg)}
+
+.hero-media{will-change:auto}
+.hero-parallax{position:absolute;inset:-8% 0;will-change:transform}
+.hero-title-row{display:block;overflow:hidden;padding:.04em .08em .09em 0;line-height:1.13}
+.hero-glyph{display:inline-block;transform-origin:50% 100%}
+.hero-copy-mask{display:block;overflow:hidden}
+.hero-copy-line{display:block}
+.hero-cta-motion{flex-shrink:0;transform-origin:50% 100%}
+
+.section-intro{margin-bottom:48px}
+.section-intro .section-label{margin-bottom:17px}
+.section-english{font-size:clamp(64px,9.7vw,170px);font-weight:500;line-height:1;letter-spacing:-.075em;color:#e1eadb}
+.english-mask{display:block;overflow:hidden;padding:.07em .03em .13em 0;margin-left:-.018em}
+.english-line{display:block;white-space:nowrap;transform-origin:left bottom}
+.section-title-row{display:flex;align-items:flex-end;justify-content:space-between;gap:60px}
+.section-title-row h2{font-size:clamp(32px,2.9vw,52px)}
+.section-title-row>p{margin:0;max-width:420px;padding-bottom:5px}
+.expertise-heading h2{font-size:clamp(32px,2.9vw,52px)}
+.contact .section-intro{margin-bottom:0}
+.contact .section-english{text-align:center;color:#6c8063}
+.contact .section-label{margin-bottom:17px}
+
+.card-motion{height:100%;transform-origin:50% 100%}
+.media-parallax{position:absolute;inset:-6% 0}
+.image-scale{height:100%;width:100%;transform-origin:center}
+.image-scale>img{height:100%;width:100%;object-fit:cover;object-position:center;transition:transform .7s cubic-bezier(.22,1,.36,1)}
+.portrait-image .media-parallax{inset:-5% 0}
+.portrait-image .image-scale>img{filter:saturate(.4)}
+.project-cover .image-scale>img{filter:saturate(.75)}
+.project-card:is(:hover,:focus-visible) .image-scale>img{transform:scale(1.035)}
+.image-reveal-panel{position:absolute;inset:-1px;background:#a9c795;z-index:5;pointer-events:none;transform:translateY(-103%)}
+.portrait-image .image-reveal-panel{background:#263526}
+.project-number,.project-study-label{z-index:2}
+
+@media(max-width:960px){
+  .section-english{font-size:clamp(54px,9.5vw,100px)}
+  .section-intro{margin-bottom:35px}
+  .section-title-row{gap:35px}
+  .section-title-row h2,.expertise-heading h2{font-size:34px}
+  .hero-parallax{inset:0}
+}
+@media(max-width:800px){
+  .section-title-row{display:block}
+  .section-title-row>p{margin-top:20px}
+}
+@media(max-width:640px){
+  .opening-skip{right:22px;top:23px;font-size:10px;padding:8px 13px}
+  .opening-caption{font-size:8px;letter-spacing:.1em}
+  .opening-identity{gap:14px}
+  .section-english{font-size:clamp(32px,9.8vw,60px);letter-spacing:-.065em}
+  .section-intro{margin-bottom:27px}
+  .section-title-row h2,.expertise-heading h2{font-size:clamp(29px,7.8vw,40px)}
+  .contact .section-english{font-size:clamp(41px,12vw,66px)}
+  .media-parallax,.portrait-image .media-parallax{inset:0}
+  .hero-title-row{padding-bottom:.11em}
+}
+@media(prefers-reduced-motion:reduce){
+  .opening-overlay,.opening-skip{display:none!important}
+  .hero-parallax{will-change:auto}
+  .hero-glyph,.english-line,.hero-copy-line,.card-motion,.image-scale,.media-parallax{transform:none!important}
+  .image-reveal-panel{display:none}
+  .project-card:is(:hover,:focus-visible) .image-scale>img{transform:none}
+}

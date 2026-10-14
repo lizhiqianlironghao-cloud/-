@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.npm-install-cache/
+.DS_Store
+*.local
+artifacts/
+sites/
+作品集/
