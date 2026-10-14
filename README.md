@@ -17,6 +17,8 @@ Windows 也可以双击 `start-preview.cmd` 启动。预览依赖本地 Vite 服
 
 - `src/content.js`：姓名、邮箱、个人介绍、项目、技能和项目数据。
 - `src/App.jsx`：五个页面模块，以及项目详情弹窗。
+- `src/components/WorkShowcase.jsx` / `WorkShowcase.css`：首页按钮打开的全屏作品展厅，包含拖拽浏览、3D 悬浮、手机滑动和返回操作。
+- `src/components/ProjectContent.jsx`：展厅和作品卡片共用的项目详情与视频播放器。
 - `src/styles.css`：配色、字体、1700px 版心、桌面与移动端布局。
 - `src/motion/usePortfolioMotion.js`：GSAP 开场、英文大标题揭幕、卡片错峰入场和桌面图片视差。
 - `src/motion/motion.css`：幕布、文字遮罩和独立的图片动画层。
@@ -32,7 +34,15 @@ Windows 也可以双击 `start-preview.cmd` 启动。预览依赖本地 Vite 服
 
 原视频位于 `作品集/10月14日.mp4`；网页播放版本位于 `public/media/work-01.mp4`，采用 720 × 1280 的 H.264 + AAC MP4，约 49 秒。手机支持内嵌播放与原生全屏。
 
-首页“浏览作品”按钮与首张作品卡片均可打开完整视频。播放作品时暂停首页背景视频，关闭播放器后恢复。
+首页“浏览作品”按钮打开全屏作品展厅；点击展厅卡片进入视频或样稿详情，点击“返回作品展厅”返回列表。Escape 会先返回展厅，再关闭展厅。首页背景视频在展厅打开期间暂停，关闭后恢复。页面原有的作品卡片仍可直接打开项目详情。
+
+展厅是独立实现的原创组件，参考了可拖拽画廊和 3D 悬浮的交互形式，未使用 React Bits Pro 的付费源码、素材或依赖。展厅与页面共用 `src/content.js` 中的 `projects`，不需要维护第二份作品列表。
+
+## 当前公开站点
+
+当前使用 Cloudflare Pages：https://grjl-3u2.pages.dev/ 。发布源码仓库为 https://github.com/lizhiqianlironghao-cloud/- ，使用 `main` 分支。推送该分支后，应检查 Cloudflare 构建及公开网页是否更新。
+
+此前的 Sites 身份仍保留在 `.openai/hosting.json`，用于旧站点记录。更新当前 Cloudflare 站点时，使用上述 GitHub 仓库。
 
 背景视频采用摄影工作台的公开素材，仅作为环境背景。来源和许可见 `ASSETS.md`。
 

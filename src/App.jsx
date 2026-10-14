@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { ArrowDown, ArrowUpRight, ArrowRight, Check, Copy, EnvelopeSimple, FrameCorners, ChartLineUp, Scissors, Target, Pause, Play, X, List } from '@phosphor-icons/react';
 import { profile, projects, capabilities, navigation } from './content.js';
 import BorderGlow from './components/BorderGlow.jsx';
+import ProjectContent from './components/ProjectContent.jsx';
+import WorkShowcase from './components/WorkShowcase.jsx';
 import { usePortfolioMotion, useReducedMotionPreference } from './motion/usePortfolioMotion.js';
 
 const iconMap = { target: Target, frame: FrameCorners, scissors: Scissors, chart: ChartLineUp };
@@ -61,7 +63,6 @@ function Hero({ onOpen, isProjectOpen }) {
   const reduce = useReducedMotionPreference();
   const [playing, setPlaying] = useState(!reduce);
   const [videoReady, setVideoReady] = useState(false);
-  const firstVideoProject = projects.find(project => project.video);
   useEffect(() => { if (reduce) setPlaying(false); }, [reduce]);
   useEffect(() => {
     const element = video.current;
@@ -91,7 +92,7 @@ function Hero({ onOpen, isProjectOpen }) {
       <h1 id="hero-title" aria-label="让内容，有下一步。"><span className="hero-title-row" aria-hidden="true">{Array.from('让内容，').map((char, index) => <span className="hero-glyph" key={index}>{char}</span>)}</span><span className="hero-title-row" aria-hidden="true">{Array.from('有下一步。').map((char, index) => <span className={`hero-glyph ${char === '。' ? 'accent-period' : 'hero-highlight'}`} key={index}>{char}</span>)}</span></h1>
       <div className="hero-description">
         <p><span className="hero-copy-mask"><span className="hero-copy-line">用创意吸引目光，用剪辑推进表达。</span></span><span className="hero-copy-mask"><span className="hero-copy-line">从一帧好画面，到一次有效行动。</span></span></p>
-        <div className="hero-cta-motion">{firstVideoProject ? <button type="button" className="pill-button primary" aria-haspopup="dialog" onClick={() => onOpen(firstVideoProject)}>浏览作品 <ArrowUpRight size={20} /></button> : <a className="pill-button primary" href="#work">浏览作品 <ArrowUpRight size={20} /></a>}</div>
+        <div className="hero-cta-motion"><button type="button" className="pill-button primary" aria-haspopup="dialog" onClick={onOpen}>浏览作品 <ArrowUpRight size={20} /></button></div>
       </div>
     </div>
     <div className="hero-side-note" aria-hidden="true"><span>IDEA. FRAME. ACTION.</span><i /></div>
@@ -174,12 +175,13 @@ function ProjectDialog({ project, onClose }) {
     document.body.style.overflow = 'hidden';
     return () => { element.close(); document.body.style.overflow = previousOverflow; };
   }, []);
-  return <dialog ref={dialog} className="project-dialog" onCancel={(event) => { event.preventDefault(); onClose(); }} onClick={(event) => { if (event.target === dialog.current) onClose(); }} aria-labelledby="dialog-title"><div className="dialog-panel"><button className="dialog-close icon-button" onClick={onClose} aria-label="关闭项目详情"><X size={25} /></button><div className={`dialog-visual ${project.video ? 'is-video' : ''}`}>{project.video ? <video src={project.video} controls autoPlay playsInline preload="metadata" poster={project.image} aria-label={`${project.title}，完整作品视频`} /> : <img src={project.image} alt={project.imageAlt} />}</div><div className="dialog-content"><p className="dialog-category mono">{project.category} / {project.isDemo ? 'VISUAL STUDY' : 'PROJECT'}</p><h2 id="dialog-title">{project.title}</h2><p>{project.description}</p><ul>{project.approach.map((step) => <li key={step}><span /><p>{step}</p></li>)}</ul>{project.isDemo && <div className="dialog-demo-note">此处为网站视觉样稿，不代表客户案例或投放成绩。正式项目视频与数据待补充。</div>}<a className="text-link" href={`mailto:${profile.email}?subject=${encodeURIComponent(`项目沟通：${project.title}`)}`}>交流类似项目 <ArrowUpRight size={18} /></a></div></div></dialog>;
+  return <dialog ref={dialog} className="project-dialog" onCancel={(event) => { event.preventDefault(); onClose(); }} onClick={(event) => { if (event.target === dialog.current) onClose(); }} aria-labelledby="dialog-title"><ProjectContent project={project} onClose={onClose} /></dialog>;
 }
 
 export default function App() {
   const root = useRef(null);
   const [selectedProject, setSelectedProject] = useState(null);
+  const [showcaseOpen, setShowcaseOpen] = useState(false);
   const skipOpening = usePortfolioMotion(root);
-  return <div ref={root} className="portfolio-app"><a className="skip-link" href="#about">跳到主要内容</a><div className="reading-progress" aria-hidden="true" /><Opening onSkip={skipOpening} /><Header /><main><Hero onOpen={setSelectedProject} isProjectOpen={Boolean(selectedProject)} /><About /><Work onOpen={setSelectedProject} /><Expertise /><Contact /></main>{selectedProject && <ProjectDialog project={selectedProject} onClose={() => setSelectedProject(null)} />}</div>;
+  return <div ref={root} className="portfolio-app"><a className="skip-link" href="#about">跳到主要内容</a><div className="reading-progress" aria-hidden="true" /><Opening onSkip={skipOpening} /><Header /><main><Hero onOpen={() => setShowcaseOpen(true)} isProjectOpen={Boolean(selectedProject) || showcaseOpen} /><About /><Work onOpen={setSelectedProject} /><Expertise /><Contact /></main>{selectedProject && <ProjectDialog project={selectedProject} onClose={() => setSelectedProject(null)} />}{showcaseOpen && <WorkShowcase onClose={() => setShowcaseOpen(false)} />}</div>;
 }
