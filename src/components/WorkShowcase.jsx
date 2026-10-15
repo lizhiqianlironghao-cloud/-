@@ -77,7 +77,9 @@ export default function WorkShowcase({ onClose }) {
     const revealed = new WeakSet();
     gsap.set(cards, { y: 48, scale: 0.98, opacity: 0 });
     gsap.set(element.querySelectorAll('.showcase-poster'), { scale: 1.13 });
-    gsap.set(element.querySelectorAll('.showcase-image-reveal'), { yPercent: 0 });
+    // Reset the pixel translation parsed from the CSS fallback before using
+    // percentage movement, otherwise the shutter can start above the image.
+    gsap.set(element.querySelectorAll('.showcase-image-reveal'), { y: 0, yPercent: 0 });
 
     const reveal = contextSafe(entries => {
       const batch = entries.filter(entry => entry.isIntersecting && !revealed.has(entry.target)).map(entry => entry.target);
@@ -103,7 +105,7 @@ export default function WorkShowcase({ onClose }) {
       gsap.killTweensOf([card, image, mask]);
       gsap.set(card, { clearProps: 'transform,opacity' });
       gsap.set(image, { clearProps: 'transform' });
-      gsap.set(mask, { yPercent: -101 });
+      gsap.set(mask, { y: 0, yPercent: -101 });
     });
     element.addEventListener('focusin', showFocusedCard);
     return () => { observer.disconnect(); element.removeEventListener('focusin', showFocusedCard); };
