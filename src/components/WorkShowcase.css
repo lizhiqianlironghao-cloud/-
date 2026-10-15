@@ -35,7 +35,7 @@
 .showcase-title-mask { display: inline-block; overflow: hidden; padding-bottom: .06em; margin-bottom: -.06em; }
 .showcase-title-line { display: inline-block; transform-origin: center bottom; white-space: nowrap; }
 .showcase-intro-copy { color: #a9b3a7; font-size: 13px; margin-top: 12px; }
-.showcase-viewport { position: relative; overflow-x: auto; overflow-y: hidden; padding: 22px 0 14px; cursor: grab; scrollbar-width: none; touch-action: pan-x pan-y pinch-zoom; scroll-snap-type: x mandatory; }
+.showcase-viewport { position: relative; overflow-x: auto; overflow-y: hidden; padding: 22px 0 14px; cursor: grab; scrollbar-width: none; touch-action: pan-x pan-y pinch-zoom; overscroll-behavior-x: contain; scroll-snap-type: none; scroll-behavior: auto; overflow-anchor: none; }
 .showcase-viewport::-webkit-scrollbar { display: none; }
 .showcase-track { display: grid; grid-auto-flow: column; grid-auto-columns: calc((100% - var(--showcase-gap) * 2) / 3); align-items: stretch; gap: var(--showcase-gap); width: 100%; padding-block: 5px 8px; }
 .showcase-card-slot { min-width: 0; scroll-snap-align: start; }
@@ -63,6 +63,10 @@
 .showcase-count small { margin-left: 9px; color: #bac5b5; font-size: 10px; letter-spacing: 0; }
 .showcase-footer p, .showcase-browse > span { color: #9caa96; font-size: 10px; }
 .showcase-browse { display: flex; align-items: center; gap: 25px; }
+.showcase-controls { display: flex; align-items: center; gap: 16px; }
+.showcase-autoplay { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 44px; padding: 8px 12px; background: transparent; color: #bac5b5; border: 1px solid var(--line); border-radius: 24px; font-size: 10px; white-space: nowrap; transition: color .3s, background .3s; }
+.showcase-autoplay:not(:disabled):is(:hover, :focus-visible) { color: var(--bg); background: var(--accent); }
+.showcase-autoplay:disabled { opacity: .6; cursor: default; }
 .showcase-arrows { display: flex; gap: 10px; }
 .showcase-arrows button { display: grid; place-items: center; width: 44px; height: 44px; background: transparent; border: 1px solid var(--line); border-radius: 50%; transition: color .3s, background .3s; }
 .showcase-arrows button:not(:disabled):is(:hover, :focus-visible) { color: var(--bg); background: var(--accent); }
@@ -98,7 +102,7 @@
   .showcase-title-mask { display: block; width: max-content; max-width: 100%; }
   .showcase-intro > p:first-child { font-size: 9px; }
   .showcase-intro-copy { font-size: 11px; margin-top: 12px; }
-  .showcase-viewport { padding-top: 20px; scroll-snap-type: x mandatory; scroll-padding-inline: 1px; }
+  .showcase-viewport { padding-top: 20px; }
   .showcase-track { grid-auto-columns: 100%; }
   .showcase-card-number { left: 14px; top: 14px; font-size: 9px; }
   .showcase-card-kind { right: 14px; top: 14px; font-size: 9px; }
@@ -114,6 +118,8 @@
   .showcase-browse { gap: 8px; flex-direction: column; align-items: flex-end; }
   .showcase-browse > span { font-size: 8px; }
   .showcase-arrows button { width: 38px; height: 38px; }
+  .showcase-controls { gap: 8px; }
+  .showcase-autoplay { min-height: 38px; padding-inline: 10px; font-size: 9px; }
   .showcase-player { margin-top: 18px; }
   .showcase-player .dialog-content { padding: 28px 22px; }
   .showcase-player .dialog-content h2 { font-size: 27px; }
@@ -122,4 +128,11 @@
 @media (prefers-reduced-motion: reduce) {
   .showcase-viewport { scroll-behavior: auto; }
   .showcase-card-visual, .showcase-title-line, .showcase-card { transform: none !important; }
+}
+@media (max-width: 480px) {
+  .showcase-footer { align-items: stretch; gap: 15px; flex-direction: column; }
+  .showcase-footer > div:first-child { display: flex; align-items: center; gap: 16px; }
+  .showcase-footer p { margin-top: 0; }
+  .showcase-browse { flex-direction: row; align-items: center; justify-content: space-between; gap: 12px; }
+  .showcase-controls { flex-shrink: 0; }
 }

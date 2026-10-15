@@ -1,16 +1,21 @@
 import { useEffect, useRef, useState } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
-import { ArrowLeft, ArrowRight, ArrowUpRight, FrameCorners, Play, X } from '@phosphor-icons/react';
+import { ArrowLeft, ArrowRight, ArrowUpRight, FrameCorners, Pause, Play, X } from '@phosphor-icons/react';
 import { profile, projects } from '../content.js';
 import { useReducedMotionPreference } from '../motion/usePortfolioMotion.js';
+import { useShowcaseLoop } from '../motion/useShowcaseLoop.js';
 import ProjectContent from './ProjectContent.jsx';
 import './WorkShowcase.css';
 
 // Original gallery implementation. No React Bits Pro source or assets are used.
-function ShowcaseCard({ project, index, onSelect, dragging, reduce, buttonRef }) {
+function ShowcaseCard({ project, index, copy, onSelect, dragging, reduce, buttonRef }) {
   const surface = useRef(null);
   const tilt = useRef(null);
+  const duplicate = copy !== 1;
+  // Copies are visual continuity only. The middle set provides the nine
+  // keyboard/screen-reader buttons, without repeating the accessible list.
+  const Card = duplicate ? 'div' : 'button';
   useGSAP(() => {
     const media = gsap.matchMedia();
     media.add('(hover: hover) and (pointer: fine)', () => {
@@ -31,10 +36,10 @@ function ShowcaseCard({ project, index, onSelect, dragging, reduce, buttonRef })
     tilt.current.y(((event.clientX - box.left) / box.width - 0.5) * 14);
   };
   const reset = () => { tilt.current?.x(0); tilt.current?.y(0); };
-  return <article className="showcase-card-slot">
-    <button ref={buttonRef} type="button" className="showcase-card" onPointerMove={move} onPointerLeave={reset} onClick={() => onSelect(project)} aria-label={`${project.video ? '播放作品' : '查看视觉样稿'}：${project.title}`}>
+  return <article className="showcase-card-slot" data-copy={copy} aria-hidden={duplicate ? true : undefined}>
+    <Card ref={buttonRef} type={duplicate ? undefined : 'button'} className="showcase-card" onPointerMove={move} onPointerLeave={reset} onClick={() => onSelect(project)} aria-label={duplicate ? undefined : `${project.video ? '播放作品' : '查看视觉样稿'}：${project.title}`}>
       <div ref={surface} className={`showcase-card-visual ${project.video ? 'has-video' : ''}`}>
-        <img className="showcase-poster" src={project.image} alt={project.imageAlt} style={{ objectPosition: project.imagePosition || 'center' }} loading={index < 3 ? 'eager' : 'lazy'} decoding="async" draggable="false" />
+        <img className="showcase-poster" src={project.image} alt={project.imageAlt} style={{ objectPosition: project.imagePosition || 'center' }} loading={!duplicate && index < 3 ? 'eager' : 'lazy'} decoding="async" draggable="false" />
         <div className="showcase-card-shade" />
         <span className="showcase-card-number mono">{String(index + 1).padStart(2, '0')} / {String(projects.length).padStart(2, '0')}</span>
         <span className="showcase-card-kind">{project.isDemo ? '视觉样稿' : `视频作品 · ${project.durationLabel}`}</span>
@@ -42,7 +47,7 @@ function ShowcaseCard({ project, index, onSelect, dragging, reduce, buttonRef })
       </div>
       <div className="showcase-card-caption"><span>{project.category}</span><h3>{project.title}</h3></div>
       <div className="showcase-card-meta"><span>{project.tags.join(' / ')}</span><span>{project.video ? '观看影片' : '查看样稿'} <ArrowUpRight size={14} /></span></div>
-    </button>
+    </Card>
   </article>;
 }
 
@@ -54,23 +59,20 @@ export default function WorkShowcase({ onClose }) {
   const dragging = useRef(false);
   const suppressClick = useRef(false);
   const clickTimer = useRef(null);
-  const scrollFrame = useRef(null);
   const galleryScroll = useRef(0);
   const [selected, setSelected] = useState(null);
-  const [edges, setEdges] = useState({ start: true, end: false });
   const reduce = useReducedMotionPreference();
+  const { paused, togglePaused, advance } = useShowcaseLoop({ viewport, scope: dialog, count: projects.length, enabled: !selected, reduce, drag, dragging });
 
   useEffect(() => {
     const element = dialog.current;
     const previousOverflow = document.body.style.overflow;
     element.showModal();
-    viewport.current?.scrollTo({ left: 0, behavior: 'instant' });
     document.body.style.overflow = 'hidden';
     return () => {
       element.close();
       document.body.style.overflow = previousOverflow;
       clearTimeout(clickTimer.current);
-      cancelAnimationFrame(scrollFrame.current);
     };
   }, []);
 
@@ -79,33 +81,9 @@ export default function WorkShowcase({ onClose }) {
     const timeline = gsap.timeline({ defaults: { ease: 'power4.out' } });
     timeline
       .fromTo('.showcase-title-line', { yPercent: 115, scaleY: 0.72, rotation: 3 }, { yPercent: 0, scaleY: 1, rotation: 0, duration: 1.35, stagger: 0.1, clearProps: 'transform' }, 0)
-      .fromTo('.showcase-card', { y: 72, scale: 0.97, opacity: 0 }, { y: 0, scale: 1, opacity: 1, duration: 1.5, stagger: 0.12, clearProps: 'transform,opacity' }, 0.2);
+      .fromTo(Array.from(dialog.current.querySelectorAll('[data-copy="1"] .showcase-card')).slice(0, 3), { y: 72, scale: 0.97, opacity: 0 }, { y: 0, scale: 1, opacity: 1, duration: 1.5, stagger: 0.12, clearProps: 'transform,opacity' }, 0.2);
   }, { scope: dialog, dependencies: [reduce], revertOnUpdate: true });
 
-  const updateEdges = () => {
-    const element = viewport.current;
-    if (!element) return;
-    const next = { start: element.scrollLeft < 2, end: element.scrollWidth - element.clientWidth - element.scrollLeft < 2 };
-    setEdges(previous => previous.start === next.start && previous.end === next.end ? previous : next);
-  };
-  useEffect(() => {
-    if (!viewport.current) return;
-    const observer = new ResizeObserver(updateEdges);
-    observer.observe(viewport.current);
-    updateEdges();
-    return () => observer.disconnect();
-  }, []);
-
-  const onScroll = () => {
-    cancelAnimationFrame(scrollFrame.current);
-    scrollFrame.current = requestAnimationFrame(updateEdges);
-  };
-  const advance = direction => {
-    const element = viewport.current;
-    const card = element.querySelector('.showcase-card-slot');
-    const step = card?.nextElementSibling ? card.nextElementSibling.offsetLeft - card.offsetLeft : element.clientWidth;
-    element.scrollBy({ left: direction * step, behavior: reduce ? 'instant' : 'smooth' });
-  };
   const pointerDown = event => {
     if (event.pointerType !== 'mouse' || event.button !== 0) return;
     suppressClick.current = false;
@@ -134,7 +112,6 @@ export default function WorkShowcase({ onClose }) {
     if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
     clearTimeout(clickTimer.current);
     clickTimer.current = setTimeout(() => { suppressClick.current = false; }, 0);
-    updateEdges();
   };
   const selectProject = project => {
     galleryScroll.current = dialog.current.scrollTop;
@@ -151,6 +128,8 @@ export default function WorkShowcase({ onClose }) {
     });
   };
   const videos = projects.filter(project => project.video).length;
+  // Two projects need an extra visual copy to fill a three-column desktop.
+  const copies = projects.length > 2 ? [0, 1, 2] : projects.length === 2 ? [0, 1, 2, 3] : [1];
 
   return <dialog ref={dialog} className="work-showcase" aria-labelledby={selected ? 'showcase-project-title' : 'showcase-title'} onCancel={event => { event.preventDefault(); selected ? backToGallery() : onClose(); }}>
     <div className="showcase-shell">
@@ -162,10 +141,28 @@ export default function WorkShowcase({ onClose }) {
       <div className="showcase-stage" hidden={Boolean(selected)}>
         <div className="showcase-intro"><p>精选作品 / 从创意到成片</p><h2 id="showcase-title"><span className="showcase-title-mask"><span className="showcase-title-line">SELECTED</span></span><span className="showcase-title-mask"><span className="showcase-title-line">FRAMES<span className="accent-period">.</span></span></span></h2><p className="showcase-intro-copy">把每一次表达，留在画面里。</p></div>
         {projects.length ? <>
-          <div ref={viewport} className="showcase-viewport" role="region" aria-label="可拖动的作品列表" tabIndex={0} onScroll={onScroll} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={finishDrag} onPointerCancel={finishDrag} onLostPointerCapture={finishDrag} onClickCapture={event => { if (suppressClick.current && event.detail > 0) { event.preventDefault(); event.stopPropagation(); } }} onKeyDown={event => { if (event.target === event.currentTarget && ['ArrowLeft', 'ArrowRight'].includes(event.key)) { event.preventDefault(); advance(event.key === 'ArrowRight' ? 1 : -1); } }}>
-            <div className="showcase-track">{projects.map((project, index) => <ShowcaseCard key={project.id} project={project} index={index} onSelect={selectProject} dragging={dragging} reduce={reduce} buttonRef={element => { if (element) cardButtons.current.set(project.id, element); else cardButtons.current.delete(project.id); }} />)}</div>
+          <div ref={viewport} className="showcase-viewport" role="region" aria-roledescription="循环作品展厅" aria-label="可拖动的作品列表" aria-describedby="showcase-browse-hint" tabIndex={0} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={finishDrag} onPointerCancel={finishDrag} onLostPointerCapture={finishDrag} onClickCapture={event => { if (suppressClick.current && event.detail > 0) { event.preventDefault(); event.stopPropagation(); } }} onKeyDown={event => { if (event.target === event.currentTarget && ['ArrowLeft', 'ArrowRight'].includes(event.key)) { event.preventDefault(); advance(event.key === 'ArrowRight' ? 1 : -1); } }}>
+            <div className="showcase-track">{copies.flatMap(copy => projects.map((project, index) => <ShowcaseCard key={`${copy}-${project.id}`} project={project} index={index} copy={copy} onSelect={selectProject} dragging={dragging} reduce={reduce} buttonRef={copy === 1 ? element => { if (element) cardButtons.current.set(project.id, element); else cardButtons.current.delete(project.id); } : undefined} />))}</div>
           </div>
-          <footer className="showcase-footer"><div><span className="showcase-count">{String(projects.length).padStart(2, '0')}<small>件作品</small></span><p>{videos} 条作品视频{projects.length > videos && ` / ${projects.length - videos} 件视觉样稿`}</p></div><div className="showcase-browse"><span>拖动浏览 · 点击打开</span><div className="showcase-arrows"><button type="button" onClick={() => advance(-1)} disabled={edges.start} aria-label="向前浏览作品"><ArrowLeft size={20} /></button><button type="button" onClick={() => advance(1)} disabled={edges.end} aria-label="向后浏览作品"><ArrowRight size={20} /></button></div></div></footer>
+          <footer className="showcase-footer">
+            <div>
+              <span className="showcase-count">{String(projects.length).padStart(2, '0')}<small>件作品</small></span>
+              <p>{videos} 条作品视频{projects.length > videos && ` / ${projects.length - videos} 件视觉样稿`}</p>
+            </div>
+            <div className="showcase-browse">
+              <span id="showcase-browse-hint">循环浏览 · 拖动或点击打开</span>
+              <div className="showcase-controls">
+                {projects.length > 1 && <button type="button" className="showcase-autoplay" onClick={togglePaused} disabled={reduce} aria-label={reduce ? '已按系统设置关闭自动滚动' : paused ? '继续自动滚动作品' : '暂停自动滚动作品'}>
+                  {reduce || paused ? <Play size={14} weight="fill" /> : <Pause size={14} weight="fill" />}
+                  <span>{reduce ? '手动浏览' : paused ? '继续滚动' : '暂停滚动'}</span>
+                </button>}
+                <div className="showcase-arrows">
+                  <button type="button" onClick={() => advance(-1)} disabled={projects.length < 2} aria-label="向前循环浏览作品"><ArrowLeft size={20} /></button>
+                  <button type="button" onClick={() => advance(1)} disabled={projects.length < 2} aria-label="向后循环浏览作品"><ArrowRight size={20} /></button>
+                </div>
+              </div>
+            </div>
+          </footer>
         </> : <div className="showcase-empty">作品正在整理，欢迎通过邮箱联系我。</div>}
       </div>
 

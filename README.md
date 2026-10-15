@@ -38,6 +38,8 @@ Windows 也可以双击 `start-preview.cmd` 启动。预览依赖本地 Vite 服
 
 展厅是独立实现的原创组件，参考了可拖拽画廊和 3D 悬浮的交互形式，未使用 React Bits Pro 的付费源码、素材或依赖。展厅与页面共用 `src/content.js` 中的 `projects`，不需要维护第二份作品列表。
 
+展厅卡片会缓慢自动循环，末张与首张连续衔接；拖拽、触屏滑动、鼠标悬停、键盘聚焦或打开作品时暂停。底部可手动暂停或继续，左右箭头也支持首尾循环。离开交互后延迟恢复；系统设置为减少动态效果时关闭自动滚动，保留手动浏览。循环位置与拖拽边界的检查可运行 `node --test scripts/showcase-loop.test.mjs`。
+
 ## 当前公开站点
 
 当前使用 Cloudflare Pages：https://grjl-3u2.pages.dev/ 。发布源码仓库为 https://github.com/lizhiqianlironghao-cloud/- ，使用 `main` 分支。推送该分支后，应检查 Cloudflare 构建及公开网页是否更新。
