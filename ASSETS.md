@@ -25,7 +25,20 @@
 
 `public/images/work-01-cover.jpg` 为该视频约第 3 秒的画面截帧。视频由用户明确授权用于公开作品集展示；未填写未提供的投放数据。
 
-## 字体
+## 新增展厅视觉样稿
+
+饮品、美妆、数码、咖啡、家居和汽车的六张新封面由内置 `image_gen` 生成，采用无品牌的产品或场景摄影方向，全部标注为视觉样稿，不代表真实客户合作或新增视频。
+
+- `public/images/study-coconut.webp`：椰汁与鲜椰。
+- `public/images/study-skincare.webp`：琥珀色精华瓶。
+- `public/images/study-headphones.webp`：金属头戴式耳机。
+- `public/images/study-coffee.webp`：咖啡出杯场景。
+- `public/images/study-interior.webp`：家居空间。
+- `public/images/study-automotive.webp`：无品牌汽车细节。
+
+网页图片为 1200 × 800 WebP，完整生成提示词见 `docs/showcase-study-prompts.json`。原始生成 PNG 保留在 Codex 的生成图片目录中，网页仅发布压缩后的封面。
+
+## 字体许可
 
 Space Grotesk，SIL Open Font License，采用本地 WOFF2 文件。
 - 项目：https://github.com/floriankarsten/space-grotesk

@@ -1,0 +1,36 @@
+{
+  "method": "built-in image_gen",
+  "purpose": "新增的六张作品封面均为视觉样稿，不代表真实客户项目、投放表现或新增视频。",
+  "images": [
+    {
+      "id": "04",
+      "asset": "public/images/study-coconut.webp",
+      "prompt": "Use case: product-mockup. Create one photorealistic horizontal commercial photography image for a restrained high-end Chinese director/editor portfolio, 3:2 landscape. Real materials, believable studio or location lighting, precise composition, subtle natural grain, rich but restrained colors, no illustration, no surreal floating objects, no fake UI, no brand logos, no typography, no watermark, no collage. Keep the primary subject complete and readable when cropped to a 4:3 website thumbnail. This is a fictional visual study, not evidence of a real client campaign. Subject: a chilled clear ribbed glass of white coconut milk beside one naturally cut young coconut and two small pieces of coconut flesh, on dark green stone. A few realistic condensation drops, soft side daylight, deep forest background. Tactile real food advertising still, calm and fresh. Place the product group in the center, leave a little breathing room."
+    },
+    {
+      "id": "05",
+      "asset": "public/images/study-skincare.webp",
+      "prompt": "Use case: product-mockup. Create one photorealistic horizontal commercial photography image for a restrained high-end Chinese director/editor portfolio, 3:2 landscape. Real materials, believable studio or location lighting, precise composition, subtle natural grain, rich but restrained colors, no illustration, no surreal floating objects, no fake UI, no brand logos, no typography, no watermark, no collage. Keep the primary subject complete and readable when cropped to a 4:3 website thumbnail. This is a fictional visual study, not evidence of a real client campaign. Subject: a single unbranded translucent amber skincare serum bottle with a brushed pale gold dropper cap, standing on light warm limestone beside one sculptural stone. Delicate shadow from natural window light, tiny realistic droplets and warm skin-like sandstone texture, sophisticated cosmetic advertising still. No label or text. Restrained cream, amber, stone colors, physically plausible objects, generous negative space."
+    },
+    {
+      "id": "06",
+      "asset": "public/images/study-headphones.webp",
+      "prompt": "Use case: product-mockup. Create one photorealistic horizontal commercial photography image for a restrained high-end Chinese director/editor portfolio, 3:2 landscape. Real materials, believable studio or location lighting, precise composition, subtle natural grain, rich but restrained colors, no illustration, no surreal floating objects, no fake UI, no brand logos, no typography, no watermark, no collage. Keep the primary subject complete and readable when cropped to a 4:3 website thumbnail. This is a fictional visual study, not evidence of a real client campaign. Subject: premium unbranded graphite and brushed aluminum over-ear headphones lying diagonally on a dark slate studio desk. Show finely machined aluminum earcup and soft woven fabric headband, realistic construction, elegant rim light and subdued cool highlights. Clean technical product photography, graphite and soft silver palette, background almost black, no glowing sci-fi effects."
+    },
+    {
+      "id": "07",
+      "asset": "public/images/study-coffee.webp",
+      "prompt": "Use case: photorealistic-natural. Create one photorealistic horizontal commercial photography image for a restrained high-end Chinese director/editor portfolio, 3:2 landscape. Real materials, believable studio or location lighting, precise composition, subtle natural grain, rich but restrained colors, no illustration, no surreal floating objects, no fake UI, no brand logos, no typography, no watermark, no collage. Keep the primary subject complete and readable when cropped to a 4:3 website thumbnail. This is a fictional visual study, not evidence of a real client campaign. Subject: intimate artisan coffee bar detail, one ceramic cup of flat white with naturally imperfect latte art on warm dark wood, a barista's hand placing the cup near the edge of frame, blurred stainless espresso machine in background. Warm window light, realistic coffee surface and steam very subtle, cinematic 50mm lens photograph, quiet amber and charcoal tones, no text or recognizable logos."
+    },
+    {
+      "id": "08",
+      "asset": "public/images/study-interior.webp",
+      "prompt": "Use case: photorealistic-natural. Create one photorealistic horizontal commercial photography image for a restrained high-end Chinese director/editor portfolio, 3:2 landscape. Real materials, believable studio or location lighting, precise composition, subtle natural grain, rich but restrained colors, no illustration, no surreal floating objects, no fake UI, no brand logos, no typography, no watermark, no collage. Keep the primary subject complete and readable when cropped to a 4:3 website thumbnail. This is a fictional visual study, not evidence of a real client campaign. Subject: a quiet contemporary living room with one oak and cream fabric lounge chair, a low travertine side table and a small closed book. Raking afternoon sunlight creates an architectural shadow on warm gray plaster walls, natural oak floor. Realistic interior editorial photograph, restrained earth and olive tones, no people, no logos, no decorative clutter, grounded physically buildable design."
+    },
+    {
+      "id": "09",
+      "asset": "public/images/study-automotive.webp",
+      "prompt": "Use case: photorealistic-natural. Create one photorealistic horizontal commercial photography image for a restrained high-end Chinese director/editor portfolio, 3:2 landscape. Real materials, believable studio or location lighting, precise composition, subtle natural grain, rich but restrained colors, no illustration, no surreal floating objects, no fake UI, no brand logos, no typography, no watermark, no collage. Keep the primary subject complete and readable when cropped to a 4:3 website thumbnail. This is a fictional visual study, not evidence of a real client campaign. Subject: cinematic close three-quarter detail of an unbranded graphite gray modern sports coupe, front wheel, curved fender and slim headlight visible. Stationary on a real damp asphalt road near a quiet concrete architectural wall at dusk. Controlled reflections, natural soft blue-gray ambient light, beautifully tactile metal and tire details, premium automotive campaign photograph. No emblems, no license plates, no racing or motion blur."
+    }
+  ]
+}

@@ -31,16 +31,16 @@ function ShowcaseCard({ project, index, onSelect, dragging, reduce, buttonRef })
     tilt.current.y(((event.clientX - box.left) / box.width - 0.5) * 14);
   };
   const reset = () => { tilt.current?.x(0); tilt.current?.y(0); };
-  return <article className="showcase-card-slot" style={{ '--card-offset': `${[0, 34, 12][index % 3]}px` }}>
+  return <article className="showcase-card-slot">
     <button ref={buttonRef} type="button" className="showcase-card" onPointerMove={move} onPointerLeave={reset} onClick={() => onSelect(project)} aria-label={`${project.video ? '播放作品' : '查看视觉样稿'}：${project.title}`}>
       <div ref={surface} className={`showcase-card-visual ${project.video ? 'has-video' : ''}`}>
-        <img className="showcase-poster" src={project.image} alt={project.imageAlt} draggable="false" />
+        <img className="showcase-poster" src={project.image} alt={project.imageAlt} style={{ objectPosition: project.imagePosition || 'center' }} loading={index < 3 ? 'eager' : 'lazy'} decoding="async" draggable="false" />
         <div className="showcase-card-shade" />
         <span className="showcase-card-number mono">{String(index + 1).padStart(2, '0')} / {String(projects.length).padStart(2, '0')}</span>
         <span className="showcase-card-kind">{project.isDemo ? '视觉样稿' : `视频作品 · ${project.durationLabel}`}</span>
-        <div className="showcase-card-caption"><span>{project.category}</span><h3>{project.title}</h3></div>
         <span className="showcase-card-open">{project.video ? <Play size={22} weight="fill" /> : <ArrowUpRight size={27} weight="light" />}</span>
       </div>
+      <div className="showcase-card-caption"><span>{project.category}</span><h3>{project.title}</h3></div>
       <div className="showcase-card-meta"><span>{project.tags.join(' / ')}</span><span>{project.video ? '观看影片' : '查看样稿'} <ArrowUpRight size={14} /></span></div>
     </button>
   </article>;
@@ -64,6 +64,7 @@ export default function WorkShowcase({ onClose }) {
     const element = dialog.current;
     const previousOverflow = document.body.style.overflow;
     element.showModal();
+    viewport.current?.scrollTo({ left: 0, behavior: 'instant' });
     document.body.style.overflow = 'hidden';
     return () => {
       element.close();
@@ -78,7 +79,7 @@ export default function WorkShowcase({ onClose }) {
     const timeline = gsap.timeline({ defaults: { ease: 'power4.out' } });
     timeline
       .fromTo('.showcase-title-line', { yPercent: 115, scaleY: 0.72, rotation: 3 }, { yPercent: 0, scaleY: 1, rotation: 0, duration: 1.35, stagger: 0.1, clearProps: 'transform' }, 0)
-      .fromTo('.showcase-card-slot', { x: 95, y: 95, rotation: 5, scale: 0.9, opacity: 0 }, { x: 0, y: 0, rotation: 0, scale: 1, opacity: 1, duration: 1.5, stagger: 0.15, clearProps: 'transform,opacity' }, 0.2);
+      .fromTo('.showcase-card', { y: 72, scale: 0.97, opacity: 0 }, { y: 0, scale: 1, opacity: 1, duration: 1.5, stagger: 0.12, clearProps: 'transform,opacity' }, 0.2);
   }, { scope: dialog, dependencies: [reduce], revertOnUpdate: true });
 
   const updateEdges = () => {
@@ -102,7 +103,8 @@ export default function WorkShowcase({ onClose }) {
   const advance = direction => {
     const element = viewport.current;
     const card = element.querySelector('.showcase-card-slot');
-    element.scrollBy({ left: direction * (card?.offsetWidth + 28 || element.clientWidth * 0.8), behavior: reduce ? 'instant' : 'smooth' });
+    const step = card?.nextElementSibling ? card.nextElementSibling.offsetLeft - card.offsetLeft : element.clientWidth;
+    element.scrollBy({ left: direction * step, behavior: reduce ? 'instant' : 'smooth' });
   };
   const pointerDown = event => {
     if (event.pointerType !== 'mouse' || event.button !== 0) return;
@@ -158,7 +160,7 @@ export default function WorkShowcase({ onClose }) {
       </header>
 
       <div className="showcase-stage" hidden={Boolean(selected)}>
-        <div className="showcase-intro"><p>精选作品 / 从创意到成片</p><h2 id="showcase-title"><span className="showcase-title-mask"><span className="showcase-title-line">SELECTED</span></span><span className="showcase-title-mask"><span className="showcase-title-line"> FRAMES<span className="accent-period">.</span></span></span></h2><p className="showcase-intro-copy">把每一次表达，留在画面里。</p></div>
+        <div className="showcase-intro"><p>精选作品 / 从创意到成片</p><h2 id="showcase-title"><span className="showcase-title-mask"><span className="showcase-title-line">SELECTED</span></span><span className="showcase-title-mask"><span className="showcase-title-line">FRAMES<span className="accent-period">.</span></span></span></h2><p className="showcase-intro-copy">把每一次表达，留在画面里。</p></div>
         {projects.length ? <>
           <div ref={viewport} className="showcase-viewport" role="region" aria-label="可拖动的作品列表" tabIndex={0} onScroll={onScroll} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={finishDrag} onPointerCancel={finishDrag} onLostPointerCapture={finishDrag} onClickCapture={event => { if (suppressClick.current && event.detail > 0) { event.preventDefault(); event.stopPropagation(); } }} onKeyDown={event => { if (event.target === event.currentTarget && ['ArrowLeft', 'ArrowRight'].includes(event.key)) { event.preventDefault(); advance(event.key === 'ArrowRight' ? 1 : -1); } }}>
             <div className="showcase-track">{projects.map((project, index) => <ShowcaseCard key={project.id} project={project} index={index} onSelect={selectProject} dragging={dragging} reduce={reduce} buttonRef={element => { if (element) cardButtons.current.set(project.id, element); else cardButtons.current.delete(project.id); }} />)}</div>
